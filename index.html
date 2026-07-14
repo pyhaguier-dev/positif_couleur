@@ -1,0 +1,511 @@
+  <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+  
+        
+<title>Positf couleur</title>
+
+<style>
+
+body{
+    margin:0;
+    overflow:hidden;
+    background:white;
+    font-family:Arial,sans-serif;
+}
+
+
+
+/* SPHERE */
+
+
+#sphere{
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100vw;
+    height:100vh;
+
+    overflow:hidden;
+}
+ 
+
+
+.sphereItem{
+    position:absolute;
+    left:50%;
+    transform:translate(-50%,-50%);
+    white-space:nowrap;
+    //font-weight:bold;
+}
+
+
+#openTime {
+   
+ position: fixed;
+    bottom: 2px;
+    right: 5px;
+    font-size: 4px;
+    color: #aaa;
+    opacity: 0.7;
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div id="sphere"></div>
+<div id="openTime"></div>
+
+<script>
+
+// ======================================
+// DATA
+// ======================================
+const numbers = ["La Divinité","La Grâce","Le Paradis","L'Angélique","La Création","L'Infini","Le Multivers","L'Origine","L'Éveil","Le Vrai Soi","La Vie Est Belle","La Vie Est Magnifique","Le Monde Est Merveilleux","La Découverte","Tout Va Bien","La Positivité","L'Amitié","La Légèreté","L'Abondance","La Jeunesse Éternelle","La Beauté","La sensualité","La Richesse","L'Authenticité","Le Charisme","La Sincérité","L'Éternité","La Jouvence","La pleine forme","Le Raffiné","La Perfection","Le Succès","La Pêche","La Vitalité","La spontanéité","La Bonne Santé","La Passion","La Réalisation","La capacité","Le Bien","La Douceur","L'Amour Universel","La Liberté","La Jouissance","Le Bien-être","La sexualité","La Vivacité","L'agilité","La Lucidité","L'acuité","L'instinct","La Joie","La Confiance","La Dignité","La Spiritualité","La Clairvoyance","La Perspicacité","La compréhension","Le Plaisir","La Satisfaction","L'Aisance","L'Honnêteté","La Sagesse","L'Agapè","Le Bonheur","Florès","La Volupté","Épanoui","L'Harmonie","Merci","Namasté"];
+// ======================================
+// COLORS
+// ======================================
+
+const colors = [
+
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "indigo",
+    "violet"
+    
+];
+
+// ======================================
+// SPHERE
+// ======================================
+
+const levelCount = 60;
+const verticalSpread = 1.15;
+let sphereItems = [];
+
+let dataIndex = 0;
+
+let phase = 0;
+
+let lastMove = 0;
+
+let colorIndex = 0;
+let previousDirection = 1;
+
+// ======================================
+// CREATE ITEM
+// ======================================
+function nextIndex(i){
+
+    return (
+        i + 1
+    ) % numbers.length;
+}
+
+function prevIndex(i){
+
+    return (
+        i - 1 +
+        numbers.length
+    ) % numbers.length;
+}
+function createTopItem(){
+
+    let newIndex;
+
+    if(
+        sphereItems.length === 0
+    ){
+        newIndex = 0;
+    }
+    else{
+
+        newIndex =
+            nextIndex(
+                sphereItems[0].index
+            );
+    }
+
+    sphereItems.unshift({
+
+        index:
+            newIndex,
+
+        value:
+            String(
+                numbers[newIndex]
+            ),
+
+        color:
+            colors[colorIndex],
+
+        level : 0
+
+    });
+
+    colorIndex =
+        (colorIndex + 1)
+        %
+        colors.length;
+}
+// ======================================
+// DRAW
+// ======================================
+
+
+
+function drawSphere(){
+console.log(
+    sphereItems[0]?.index,
+    sphereItems[
+        sphereItems.length - 1
+    ]?.index
+);
+    const sphere =
+        document.getElementById(
+            "sphere"
+        );
+
+    sphere.innerHTML = "";
+
+    const sphereHeight =
+        sphere.clientHeight;
+
+    sphereItems.forEach(item => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className =
+            "sphereItem";
+
+        div.innerText =
+            item.value;
+
+      div.style.color =
+     item.color;
+div.style.width = "100vw";
+//div.style.backgroundColor ="white";
+
+const bgColor =
+    colors[
+        (
+            colors.indexOf(item.color)
+            + 2
+            + colors.length
+        )
+        %
+        colors.length
+    ];
+div.style.backgroundColor =
+    bgColor;
+//div.style.padding =
+    "2px 6px";
+div.style.textAlign = "center";
+const lineHeight = 30;
+
+const y =
+     -10 +
+ item.level * lineHeight;
+
+
+        div.style.top =
+            y + "px";
+
+       div.style.left = "0";
+
+div.style.transform =
+    "translateY(-50%)";
+
+        const length =
+            String(
+                item.value
+            ).length;
+
+        const fontSize =
+            Math.max(
+              
+           
+
+  18,
+        36 - length * 0.5
+
+
+            );
+
+       div.style.fontSize = "24px";
+ //div.style.fontSize =
+      //      fontSize + "px";
+       sphere.appendChild(div);
+
+    });
+}
+
+
+
+// ======================================
+// MOVEMENT
+// ======================================
+
+
+function moveForward(step){
+
+    sphereItems.forEach(item=>{
+        item.level += step;
+    });
+
+    sphereItems =
+        sphereItems.filter(
+            item => item.level < levelCount
+        );
+
+    if(
+        sphereItems.length === 0 ||
+        sphereItems[0].level >= 1
+    ){
+        createTopItem();
+    }
+}
+
+
+function moveBackward(step){
+
+    sphereItems.forEach(item=>{
+        item.level -= step;
+    });
+
+    sphereItems =
+        sphereItems.filter(
+            item => item.level >= 0
+        );
+
+    if(
+        sphereItems.length === 0 ||
+        sphereItems[sphereItems.length-1].level <= levelCount-2
+    ){
+
+      
+colorIndex =
+    (
+        colorIndex - 1 +
+        colors.length
+    )
+    %
+    colors.length;
+
+
+const newIndex =
+
+    sphereItems.length === 0
+    ? 0
+    : prevIndex(
+        sphereItems[
+            sphereItems.length - 1
+        ].index
+    );
+
+sphereItems.push({
+
+    index:
+        newIndex,
+
+    value:
+        String(
+            numbers[newIndex]
+        ),
+
+    color:
+        colors[colorIndex],
+
+    level:
+        levelCount - 1
+
+});
+
+    }
+}
+
+// ======================================
+// SINUSOID
+// ======================================
+
+function loop(timestamp){
+
+ 
+const cycleDuration = 279.272727;  //124.121212
+
+    phase +=
+      (1.939393*Math.PI)
+             /
+        (cycleDuration * 60);
+
+    const wave =
+        Math.sin(
+            phase
+        );
+
+    const direction =
+        wave >= 0
+        ? 1
+        : -1;
+if(
+    direction > 0 &&
+    previousDirection < 0
+){
+
+   const bottomItem =
+    sphereItems[
+        sphereItems.length - 1
+    ];
+
+
+
+    const visibleIndex =
+        numbers.indexOf(
+            bottomItem.value
+        );
+
+    if(visibleIndex >= 0){
+
+        
+    }
+}
+
+previousDirection = direction;
+
+ const speed =
+        Math.abs(
+            wave
+        );
+           
+
+
+const minInterval = 90.90909; //60.606060
+const maxInterval = 323.232323; // 1939.393939
+
+
+
+const equivalentInterval =
+    maxInterval -
+    speed *
+    (
+        maxInterval -
+        minInterval
+    );
+
+const step =
+    30 / equivalentInterval;
+
+
+if(direction > 0){
+    moveForward(step);
+}
+else{
+    moveBackward(step);
+}
+
+drawSphere();
+
+requestAnimationFrame(
+    loop
+);
+}
+
+// ======================================
+// FULLSCREEN
+// ======================================
+
+function enterFullscreen(){
+
+    if(
+      !document.fullscreenElement
+    ){
+
+        document
+        .documentElement
+        .requestFullscreen()
+        .catch(()=>{});
+    }
+}
+
+document.addEventListener(
+    "click",
+    enterFullscreen,
+    {once:true}
+);
+
+document.addEventListener(
+    "touchstart",
+    enterFullscreen,
+    {once:true}
+);
+
+// ======================================
+// START
+// ======================================
+
+window.addEventListener(
+    "load",
+    ()=>{
+keepScreenAwake();
+      
+
+
+
+createTopItem();
+drawSphere();
+const openedAt = new Date();
+    document.getElementById("openTime").textContent =
+        openedAt.toLocaleString();
+        requestAnimationFrame(
+            loop
+        );
+    }
+);
+      
+let wakeLock = null;
+
+async function keepScreenAwake() {
+    try {
+        wakeLock = await navigator.wakeLock.request("screen");
+
+        wakeLock.addEventListener("release", () => {
+            console.log("Wake Lock released");
+        });
+
+        console.log("Screen Wake Lock active");
+
+    } catch (err) {
+        console.log("Wake Lock error:", err);
+    }
+}
+
+document.addEventListener("visibilitychange", async () => {
+
+    if (
+        wakeLock !== null &&
+        document.visibilityState === "visible"
+    ) {
+        await keepScreenAwake();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
