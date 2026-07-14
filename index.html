@@ -196,8 +196,19 @@ console.log(
         div.innerText =
             item.value;
 
-      div.style.color =
-     item.color;
+     const fwColor =
+    colors[
+        (
+            colors.indexOf(item.color)
+            + 2
+            + colors.length
+        )
+        %
+        colors.length
+    ];
+
+        div.style.color =
+     fwColor;
 div.style.width = "100vw";
 //div.style.backgroundColor ="white";
 
@@ -211,6 +222,7 @@ const bgColor =
         %
         colors.length
     ];
+
 div.style.backgroundColor =
     bgColor;
 //div.style.padding =
